@@ -6,7 +6,6 @@ This is a Streamlit-powered chatbot designed to assist users with insurance-rela
 ## Features
 
 - **API Key Setup**: The chatbot can fetch the OpenAI API key from the system environment variable or allow the user to input a custom key.
-- **Model Selection**: Users can select from popular OpenAI models, including GPT-3.5 and GPT-4.
 - **Real-time Chat**: The chatbot uses Streamlit's real-time capabilities to interact with users and stream responses.
 - **Error Handling**: If the API key is invalid or there's any error in generating a response, the issue is clearly shown to the user and logged in the chat history.
 - **Insurance Domain-Specific**: The chatbot is pre-configured with insurance-related system prompts to ensure that the responses are relevant to the insurance domain.
