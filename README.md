@@ -1,7 +1,7 @@
 
 # 💬 Insurance Chatbot
 
-This is a Streamlit-powered chatbot designed to assist users with domain specificc here insurance-related queries. It utilizes the OpenAI API to provide conversational responses, helping users with topics such as insurance types and more.
+This is a Streamlit-powered chatbot designed to assist users with insurance-related queries. It utilizes the OpenAI API to provide conversational responses, helping users with topics such as insurance types, claims, policy details, and more.
 
 ## Features
 
@@ -10,6 +10,7 @@ This is a Streamlit-powered chatbot designed to assist users with domain specifi
 - **Real-time Chat**: The chatbot uses Streamlit's real-time capabilities to interact with users and stream responses.
 - **Error Handling**: If the API key is invalid or there's any error in generating a response, the issue is clearly shown to the user and logged in the chat history.
 - **Insurance Domain-Specific**: The chatbot is pre-configured with insurance-related system prompts to ensure that the responses are relevant to the insurance domain.
+- **User-friendly API Key Error**: If the API key is missing, the app will display a friendly error message and ask the user to input the key.
 
 ## Requirements
 
@@ -62,3 +63,7 @@ insurance-chatbot/
 
 4. **Error Handling**: 
    - If there is any error while making an API call (e.g., invalid API key, API rate limits, etc.), the chatbot displays a user-friendly error message.
+
+5. **User-Friendly API Key Error**:
+   - If the user tries to interact with the chatbot without providing the API key, a clear error message will be shown asking them to enter the key, and this message will be added to the chat history.
+
