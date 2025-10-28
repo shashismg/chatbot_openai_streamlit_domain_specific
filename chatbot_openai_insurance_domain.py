@@ -75,8 +75,12 @@ prompt = st.chat_input("Type your message...")
 if prompt:
     # Check if the API key is valid before proceeding
     if not st.session_state.get("openai_api_key"):
+        # Add user message to chat history
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        st.chat_message("user").write(prompt)
+    
         # Add error message to chat history
-        st.session_state.messages.append({"role": "assistant", "content": "⚠️ Please enter a valid API key in the sidebar to continue."})
+        st.session_state.messages.append({"role": "assistant", "content": "⚠️ Please enter a valid API key in the sidebar to continue."})        
         
         # Display friendly error message
         st.error("❌ API Key not found. Please enter your API Key in the sidebar to continue.")
