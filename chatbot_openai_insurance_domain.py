@@ -26,50 +26,21 @@ def test_api_key(api_key):
         return False
 
 # -------------------------------
-# ✅ Check for ENV variable on page load
-# -------------------------------
-if "openai_api_key" not in st.session_state:
-    api_key = os.environ.get("OPENAI_API_KEY")  # Fetch from system env variable
-    if api_key and test_api_key(api_key):
-        st.session_state.openai_api_key = api_key
-    else:
-        st.warning("OPENAI_API_KEY from environment is not working. Please check the system OPENAI_API_KEY.")
-
-# -------------------------------
-# ✅ Sidebar: Option to enter new API key & select model
+# ✅ Ask the user for API Key Input
 # -------------------------------
 with st.sidebar:
     st.subheader("🔐 API Key Setup")
 
-    # Radio button to select the API key source
-    api_key_source = st.radio(
-        "Select API Key Source",
-        options=["System Environment Variable", "User Input"],
-        index=0  # Default to 'System Environment Variable'
-    )
+    # Ask user to enter API key in the sidebar
+    api_input = st.text_input("Enter OpenAI API Key", type="password")
 
-    # If the user selects "User Input", allow entering the API key
-    if api_key_source == "User Input":
-        api_input = st.text_input("Enter OpenAI API Key", type="password")
-        if api_input:
-            # Test the API connection
-            if test_api_key(api_input):
-                st.session_state.openai_api_key = api_input
-                st.success("✅ API key working!")
-            else:
-                st.error("❌ Invalid API key. Please check your key and try again.")                
-    else:
-        if not st.session_state.openai_api_key:
-            st.warning("OPENAI_API_KEY missing from environment! Please enter your key.")
-        else:            
-            st.session_state.openai_api_key = os.environ.get("OPENAI_API_KEY")
-            if test_api_key(st.session_state.openai_api_key):
-                st.success("✅ API key loaded from environment and working")
-            else:   
-                st.warning("OPENAI_API_KEY from environment is not working. Please check the system OPENAI_API_KEY key.")
-
-    # Model selection moved to the sidebar
-    model = st.selectbox("Select Model", ["gpt-3.5-turbo", "gpt-4", "gpt-3.5-turbo-16k", "gpt-4-32k"], index=0)
+    # If API key is entered, validate it
+    if api_input:
+        if test_api_key(api_input):
+            st.session_state.openai_api_key = api_input
+            st.success("✅ API key is working!")
+        else:
+            st.error("❌ Invalid API key. Please check your key and try again.")
 
 # -------------------------------
 # ✅ Chatbot UI
@@ -103,12 +74,19 @@ prompt = st.chat_input("Type your message...")
 
 if prompt:
     # Check if the API key is valid before proceeding
-    if not st.session_state.openai_api_key:
-        st.info("⚠️ Please enter a valid API key in the sidebar to continue.")
+    if not st.session_state.get("openai_api_key"):
+        # Add error message to chat history
+        st.session_state.messages.append({"role": "assistant", "content": "⚠️ Please enter a valid API key in the sidebar to continue."})
+        
+        # Display friendly error message
+        st.error("❌ API Key not found. Please enter your API Key in the sidebar to continue.")
+        
+        # Stop further execution
         st.stop()
 
+    # If API key is available, proceed with the model call
     client = openai.Client(api_key=st.session_state.openai_api_key)
-
+    
     # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.chat_message("user").write(prompt)
@@ -116,7 +94,7 @@ if prompt:
     # Get model response
     try:
         response = client.chat.completions.create(
-            model=model,
+            model="gpt-3.5-turbo",
             messages=st.session_state.messages
         )
         msg = response.choices[0].message.content
@@ -128,4 +106,4 @@ if prompt:
     except Exception as e:
         error_message = f"❌ Error: {str(e)}"
         st.session_state.messages.append({"role": "assistant", "content": error_message})
-        st.error(error_message) 
+        st.error(error_message)
